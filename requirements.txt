@@ -1,0 +1,15 @@
+# Closed-Loop Intent Assurance — public-notebook dependencies.
+# Verified against Python 3.10 – 3.13.
+#
+# Same pinned NVIDIA NIM client lineup as VIAVI's RAN Energy-Saving blueprint
+# (es-blueprint-rsg).
+
+# Core notebook + utilities
+jupyter
+ipykernel
+python-dotenv
+pandas
+
+# NVIDIA NIM clients (hosted inference for Meta Llama 3.3 70B + Nemotron Nano-9B-v2)
+langchain-nvidia-ai-endpoints==0.3.19
+langchain-core

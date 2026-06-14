@@ -1,0 +1,1434 @@
+{
+  "$schema": "bp3.snapshot.v1",
+  "snapshot_id": "viavi-6router-2026-05-12T07:00Z",
+  "captured_at": "2026-05-12T07:00:00Z",
+  "topology_name": "viavi-anchor-6router-day1",
+  "notes": "Day-1 snapshot: 6 Nokia SR Linux routers (free container image, no license required), single AS 64512, iBGP via single RR, IS-IS Area 49.0001 Level-2 backbone, 3 TE tunnels REALIZED AS SR-POLICY ON SR LINUX (segment routing MPLS via IS-IS-SR; SR Linux 24.7 does not support RSVP-TE \u2014 that maps to Day-2 cRPD), 5 named services. Day-2 adds 2 Juniper cRPD PEs (also free) and SVC-004/007/008.",
+  "asn": 64512,
+  "igp": {
+    "protocol": "ISIS",
+    "area": "49.0001",
+    "level": 2,
+    "metric_style": "wide"
+  },
+  "determinism": {
+    "tiebreak_order": [
+      "local_pref",
+      "as_path_len",
+      "origin",
+      "med",
+      "ebgp_over_ibgp",
+      "igp_cost_to_nexthop",
+      "router_id_lowest",
+      "neighbor_ip_lowest"
+    ],
+    "canonical_sort": true,
+    "ecmp_tiebreak": "router_id_ascending",
+    "df_election_seed": 42,
+    "engine_versions": {
+      "spf": "0.1.0",
+      "bgp": "0.1.0",
+      "mpls_te": "0.1.0",
+      "services": "0.1.0",
+      "utilisation": "0.1.0",
+      "guardrails": "0.1.0"
+    }
+  },
+  "acls": [
+    {
+      "_note": "Day-1 stub. Day-2 populates per-router ACL chains from device configs."
+    }
+  ],
+  "sr_policies": [
+    {
+      "_note": "Day-1: this stub is now superseded by mpls_te.tunnels[] entries which carry segment_list (SR-Policy realization on SR Linux). A dedicated sr_policies parser arrives Day-2 when we add explicit colored SR-Policies driven by BGP color extended communities."
+    }
+  ],
+  "segment_routing": {
+    "_note": "SR-MPLS realization on Nokia SR Linux 24.7. IS-IS-SR allocates each router a node-SID = SRGB start + last octet of loopback IP. Adjacency SIDs are dynamic.",
+    "srgb": {
+      "start_label": 16000,
+      "end_label": 23999
+    },
+    "node_sids": {
+      "YVR-CORE-1": {
+        "prefix": "10.100.0.1/32",
+        "index": 1,
+        "absolute_label": 16001
+      },
+      "YYC-CORE-2": {
+        "prefix": "10.100.0.2/32",
+        "index": 2,
+        "absolute_label": 16002
+      },
+      "YYZ-CORE-3": {
+        "prefix": "10.100.0.3/32",
+        "index": 3,
+        "absolute_label": 16003
+      },
+      "YWG-PE-6": {
+        "prefix": "10.100.0.6/32",
+        "index": 6,
+        "absolute_label": 16006
+      },
+      "YOW-PE-7": {
+        "prefix": "10.100.0.7/32",
+        "index": 7,
+        "absolute_label": 16007
+      },
+      "YVR-RR-11": {
+        "prefix": "10.100.0.11/32",
+        "index": 11,
+        "absolute_label": 16011
+      }
+    },
+    "ti_lfa": {
+      "enabled": true,
+      "_note": "Topology-Independent LFA \u2014 SR's FRR equivalent. Replaces RSVP-TE FRR."
+    }
+  },
+  "routers": [
+    {
+      "name": "YVR-CORE-1",
+      "role": "core",
+      "vendor": "nokia",
+      "os": "srlinux",
+      "os_version": "24.7.1",
+      "platform": "7220 IXR-D5",
+      "loopback": "10.100.0.1/32",
+      "router_id": "10.100.0.1",
+      "isis_system_id": "1921.6800.0001",
+      "site": "Vancouver",
+      "interfaces": [
+        {
+          "name": "ethernet-1/1",
+          "neighbor": "YYC-CORE-2",
+          "neighbor_intf": "ethernet-1/1",
+          "ip": "10.10.1.1/30",
+          "isis_metric": 480,
+          "te_metric": 480,
+          "srlg": [
+            "SRLG-WEST-1"
+          ]
+        },
+        {
+          "name": "ethernet-1/2",
+          "neighbor": "YWG-PE-6",
+          "neighbor_intf": "ethernet-1/1",
+          "ip": "10.10.4.1/30",
+          "isis_metric": 940,
+          "te_metric": 940,
+          "srlg": [
+            "SRLG-LONGHAUL-1"
+          ]
+        },
+        {
+          "name": "ethernet-1/3",
+          "neighbor": "YVR-RR-11",
+          "neighbor_intf": "ethernet-1/1",
+          "ip": "10.10.7.1/30",
+          "isis_metric": 1,
+          "te_metric": 1,
+          "srlg": []
+        }
+      ]
+    },
+    {
+      "name": "YYC-CORE-2",
+      "role": "core",
+      "vendor": "nokia",
+      "os": "srlinux",
+      "os_version": "24.7.1",
+      "platform": "7220 IXR-D5",
+      "loopback": "10.100.0.2/32",
+      "router_id": "10.100.0.2",
+      "isis_system_id": "1921.6800.0002",
+      "site": "Calgary",
+      "interfaces": [
+        {
+          "name": "ethernet-1/1",
+          "neighbor": "YVR-CORE-1",
+          "neighbor_intf": "ethernet-1/1",
+          "ip": "10.10.1.2/30",
+          "isis_metric": 480,
+          "te_metric": 480,
+          "srlg": [
+            "SRLG-WEST-1"
+          ]
+        },
+        {
+          "name": "ethernet-1/2",
+          "neighbor": "YYZ-CORE-3",
+          "neighbor_intf": "ethernet-1/1",
+          "ip": "10.10.2.1/30",
+          "isis_metric": 1700,
+          "te_metric": 1700,
+          "srlg": [
+            "SRLG-CONT-1"
+          ]
+        },
+        {
+          "name": "ethernet-1/3",
+          "neighbor": "YWG-PE-6",
+          "neighbor_intf": "ethernet-1/2",
+          "ip": "10.10.5.1/30",
+          "isis_metric": 670,
+          "te_metric": 670,
+          "srlg": [
+            "SRLG-WC-1"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "YYZ-CORE-3",
+      "role": "core",
+      "vendor": "nokia",
+      "os": "srlinux",
+      "os_version": "24.7.1",
+      "platform": "7220 IXR-D5",
+      "loopback": "10.100.0.3/32",
+      "router_id": "10.100.0.3",
+      "isis_system_id": "1921.6800.0003",
+      "site": "Toronto",
+      "interfaces": [
+        {
+          "name": "ethernet-1/1",
+          "neighbor": "YYC-CORE-2",
+          "neighbor_intf": "ethernet-1/2",
+          "ip": "10.10.2.2/30",
+          "isis_metric": 1700,
+          "te_metric": 1700,
+          "srlg": [
+            "SRLG-CONT-1"
+          ]
+        },
+        {
+          "name": "ethernet-1/2",
+          "neighbor": "YOW-PE-7",
+          "neighbor_intf": "ethernet-1/1",
+          "ip": "10.10.3.1/30",
+          "isis_metric": 230,
+          "te_metric": 230,
+          "srlg": [
+            "SRLG-EAST-1"
+          ]
+        },
+        {
+          "name": "ethernet-1/3",
+          "neighbor": "YWG-PE-6",
+          "neighbor_intf": "ethernet-1/3",
+          "ip": "10.10.6.1/30",
+          "isis_metric": 750,
+          "te_metric": 750,
+          "srlg": [
+            "SRLG-CE-1"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "YWG-PE-6",
+      "role": "pe",
+      "vendor": "nokia",
+      "os": "srlinux",
+      "os_version": "24.7.1",
+      "platform": "7220 IXR-D3",
+      "loopback": "10.100.0.6/32",
+      "router_id": "10.100.0.6",
+      "isis_system_id": "1921.6800.0006",
+      "site": "Winnipeg",
+      "interfaces": [
+        {
+          "name": "ethernet-1/1",
+          "neighbor": "YVR-CORE-1",
+          "neighbor_intf": "ethernet-1/2",
+          "ip": "10.10.4.2/30",
+          "isis_metric": 940,
+          "te_metric": 940,
+          "srlg": [
+            "SRLG-LONGHAUL-1"
+          ]
+        },
+        {
+          "name": "ethernet-1/2",
+          "neighbor": "YYC-CORE-2",
+          "neighbor_intf": "ethernet-1/3",
+          "ip": "10.10.5.2/30",
+          "isis_metric": 670,
+          "te_metric": 670,
+          "srlg": [
+            "SRLG-WC-1"
+          ]
+        },
+        {
+          "name": "ethernet-1/3",
+          "neighbor": "YYZ-CORE-3",
+          "neighbor_intf": "ethernet-1/3",
+          "ip": "10.10.6.2/30",
+          "isis_metric": 750,
+          "te_metric": 750,
+          "srlg": [
+            "SRLG-CE-1"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "YOW-PE-7",
+      "role": "pe",
+      "vendor": "nokia",
+      "os": "srlinux",
+      "os_version": "24.7.1",
+      "platform": "7220 IXR-D3",
+      "loopback": "10.100.0.7/32",
+      "router_id": "10.100.0.7",
+      "isis_system_id": "1921.6800.0007",
+      "site": "Ottawa",
+      "interfaces": [
+        {
+          "name": "ethernet-1/1",
+          "neighbor": "YYZ-CORE-3",
+          "neighbor_intf": "ethernet-1/2",
+          "ip": "10.10.3.2/30",
+          "isis_metric": 230,
+          "te_metric": 230,
+          "srlg": [
+            "SRLG-EAST-1"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "YVR-RR-11",
+      "role": "rr",
+      "vendor": "nokia",
+      "os": "srlinux",
+      "os_version": "24.7.1",
+      "platform": "7220 IXR-D3",
+      "loopback": "10.100.0.11/32",
+      "router_id": "10.100.0.11",
+      "isis_system_id": "1921.6800.0011",
+      "site": "Vancouver",
+      "interfaces": [
+        {
+          "name": "ethernet-1/1",
+          "neighbor": "YVR-CORE-1",
+          "neighbor_intf": "ethernet-1/3",
+          "ip": "10.10.7.2/30",
+          "isis_metric": 1,
+          "te_metric": 1,
+          "srlg": []
+        }
+      ]
+    }
+  ],
+  "links": [
+    {
+      "id": "L1",
+      "a": "YVR-CORE-1",
+      "b": "YYC-CORE-2",
+      "capacity_gbps": 10,
+      "owd_ms": 4.8,
+      "util_pct": 71.0,
+      "type": "fiber",
+      "srlg": [
+        "SRLG-WEST-1"
+      ]
+    },
+    {
+      "id": "L2",
+      "a": "YYC-CORE-2",
+      "b": "YYZ-CORE-3",
+      "capacity_gbps": 10,
+      "owd_ms": 17.0,
+      "util_pct": 48.0,
+      "type": "fiber",
+      "srlg": [
+        "SRLG-CONT-1"
+      ]
+    },
+    {
+      "id": "L3",
+      "a": "YYZ-CORE-3",
+      "b": "YOW-PE-7",
+      "capacity_gbps": 10,
+      "owd_ms": 2.3,
+      "util_pct": 20.0,
+      "type": "fiber",
+      "srlg": [
+        "SRLG-EAST-1"
+      ]
+    },
+    {
+      "id": "L4",
+      "a": "YVR-CORE-1",
+      "b": "YWG-PE-6",
+      "capacity_gbps": 10,
+      "owd_ms": 9.4,
+      "util_pct": 8.0,
+      "type": "fiber",
+      "srlg": [
+        "SRLG-LONGHAUL-1"
+      ]
+    },
+    {
+      "id": "L5",
+      "a": "YYC-CORE-2",
+      "b": "YWG-PE-6",
+      "capacity_gbps": 10,
+      "owd_ms": 6.7,
+      "util_pct": 15.0,
+      "type": "fiber",
+      "srlg": [
+        "SRLG-WC-1"
+      ]
+    },
+    {
+      "id": "L6",
+      "a": "YWG-PE-6",
+      "b": "YYZ-CORE-3",
+      "capacity_gbps": 10,
+      "owd_ms": 7.5,
+      "util_pct": 23.0,
+      "type": "fiber",
+      "srlg": [
+        "SRLG-CE-1"
+      ]
+    },
+    {
+      "id": "L7",
+      "a": "YVR-RR-11",
+      "b": "YVR-CORE-1",
+      "capacity_gbps": 10,
+      "owd_ms": 0.1,
+      "util_pct": 0,
+      "type": "fiber",
+      "srlg": []
+    }
+  ],
+  "isis_lsdb": {
+    "area": "49.0001",
+    "level": 2,
+    "lsps": [
+      {
+        "advertising_router": "YVR-CORE-1",
+        "lsp_id": "1921.6800.0001.00-00",
+        "seq": "0x00001a4f",
+        "checksum": "0xb71c",
+        "lifetime_s": 1158,
+        "ipv4_reach": [
+          "10.100.0.1/32"
+        ],
+        "is_reach": [
+          {
+            "neighbor": "1921.6800.0002.00",
+            "metric": 480
+          },
+          {
+            "neighbor": "1921.6800.0006.00",
+            "metric": 940
+          },
+          {
+            "neighbor": "1921.6800.0011.00",
+            "metric": 1
+          }
+        ]
+      },
+      {
+        "advertising_router": "YYC-CORE-2",
+        "lsp_id": "1921.6800.0002.00-00",
+        "seq": "0x00001b02",
+        "checksum": "0xc1ad",
+        "lifetime_s": 1109,
+        "ipv4_reach": [
+          "10.100.0.2/32"
+        ],
+        "is_reach": [
+          {
+            "neighbor": "1921.6800.0001.00",
+            "metric": 480
+          },
+          {
+            "neighbor": "1921.6800.0003.00",
+            "metric": 1700
+          },
+          {
+            "neighbor": "1921.6800.0006.00",
+            "metric": 670
+          }
+        ]
+      },
+      {
+        "advertising_router": "YYZ-CORE-3",
+        "lsp_id": "1921.6800.0003.00-00",
+        "seq": "0x00001ad1",
+        "checksum": "0x44ee",
+        "lifetime_s": 1191,
+        "ipv4_reach": [
+          "10.100.0.3/32"
+        ],
+        "is_reach": [
+          {
+            "neighbor": "1921.6800.0002.00",
+            "metric": 1700
+          },
+          {
+            "neighbor": "1921.6800.0007.00",
+            "metric": 230
+          },
+          {
+            "neighbor": "1921.6800.0006.00",
+            "metric": 750
+          }
+        ]
+      },
+      {
+        "advertising_router": "YWG-PE-6",
+        "lsp_id": "1921.6800.0006.00-00",
+        "seq": "0x00001962",
+        "checksum": "0x88aa",
+        "lifetime_s": 1144,
+        "ipv4_reach": [
+          "10.100.0.6/32"
+        ],
+        "is_reach": [
+          {
+            "neighbor": "1921.6800.0001.00",
+            "metric": 940
+          },
+          {
+            "neighbor": "1921.6800.0002.00",
+            "metric": 670
+          },
+          {
+            "neighbor": "1921.6800.0003.00",
+            "metric": 750
+          }
+        ]
+      },
+      {
+        "advertising_router": "YOW-PE-7",
+        "lsp_id": "1921.6800.0007.00-00",
+        "seq": "0x000018f0",
+        "checksum": "0x3311",
+        "lifetime_s": 1077,
+        "ipv4_reach": [
+          "10.100.0.7/32"
+        ],
+        "is_reach": [
+          {
+            "neighbor": "1921.6800.0003.00",
+            "metric": 230
+          }
+        ]
+      },
+      {
+        "advertising_router": "YVR-RR-11",
+        "lsp_id": "1921.6800.0011.00-00",
+        "seq": "0x00001702",
+        "checksum": "0x99bd",
+        "lifetime_s": 1201,
+        "ipv4_reach": [
+          "10.100.0.11/32"
+        ],
+        "is_reach": [
+          {
+            "neighbor": "1921.6800.0001.00",
+            "metric": 1
+          }
+        ]
+      }
+    ]
+  },
+  "bgp": {
+    "process": {
+      "asn": 64512,
+      "router_id_strategy": "loopback0",
+      "graceful_restart_s": 120
+    },
+    "rr_clients": [
+      "YVR-CORE-1",
+      "YYC-CORE-2",
+      "YYZ-CORE-3",
+      "YWG-PE-6",
+      "YOW-PE-7"
+    ],
+    "neighbors": [
+      {
+        "router": "YVR-RR-11",
+        "peer": "10.100.0.1",
+        "peer_name": "YVR-CORE-1",
+        "asn": 64512,
+        "type": "iBGP-RR-client",
+        "afi_safi": [
+          "ipv4-unicast",
+          "vpnv4-unicast"
+        ],
+        "state": "Established",
+        "uptime_s": 1843200
+      },
+      {
+        "router": "YVR-RR-11",
+        "peer": "10.100.0.2",
+        "peer_name": "YYC-CORE-2",
+        "asn": 64512,
+        "type": "iBGP-RR-client",
+        "afi_safi": [
+          "ipv4-unicast",
+          "vpnv4-unicast"
+        ],
+        "state": "Established",
+        "uptime_s": 1843200
+      },
+      {
+        "router": "YVR-RR-11",
+        "peer": "10.100.0.3",
+        "peer_name": "YYZ-CORE-3",
+        "asn": 64512,
+        "type": "iBGP-RR-client",
+        "afi_safi": [
+          "ipv4-unicast",
+          "vpnv4-unicast"
+        ],
+        "state": "Established",
+        "uptime_s": 1843200
+      },
+      {
+        "router": "YVR-RR-11",
+        "peer": "10.100.0.6",
+        "peer_name": "YWG-PE-6",
+        "asn": 64512,
+        "type": "iBGP-RR-client",
+        "afi_safi": [
+          "ipv4-unicast",
+          "vpnv4-unicast"
+        ],
+        "state": "Established",
+        "uptime_s": 1843200
+      },
+      {
+        "router": "YVR-RR-11",
+        "peer": "10.100.0.7",
+        "peer_name": "YOW-PE-7",
+        "asn": 64512,
+        "type": "iBGP-RR-client",
+        "afi_safi": [
+          "ipv4-unicast",
+          "vpnv4-unicast"
+        ],
+        "state": "Established",
+        "uptime_s": 1843200
+      }
+    ],
+    "rib_ipv4": [
+      {
+        "prefix": "111.46.176.0/20",
+        "advertising_router": "YYZ-CORE-3",
+        "next_hop": "10.100.0.3",
+        "as_path": [],
+        "med": 0,
+        "local_pref": 100,
+        "origin": "igp",
+        "community": [
+          "64512:1000",
+          "64512:summary"
+        ],
+        "route_policy_in": "summary-XF",
+        "received_by": [
+          "YVR-CORE-1",
+          "YYC-CORE-2",
+          "YWG-PE-6",
+          "YOW-PE-7"
+        ],
+        "is_best": true,
+        "notes": "Aggregate that Demo B withdraws; covers SVC-001/002/003 customer prefixes via longest-match"
+      },
+      {
+        "prefix": "111.46.176.0/24",
+        "advertising_router": "YOW-PE-7",
+        "next_hop": "10.100.0.7",
+        "as_path": [],
+        "med": 0,
+        "local_pref": 100,
+        "origin": "igp",
+        "community": [
+          "64512:2001"
+        ],
+        "route_policy_in": "default",
+        "received_by": [
+          "YVR-CORE-1",
+          "YYC-CORE-2",
+          "YYZ-CORE-3",
+          "YWG-PE-6"
+        ],
+        "is_best": true,
+        "notes": "SVC-003 Federal Gov SecureNet \u2014 more-specific covered by summary-XF"
+      },
+      {
+        "prefix": "111.46.177.0/24",
+        "advertising_router": "YOW-PE-7",
+        "next_hop": "10.100.0.7",
+        "as_path": [],
+        "med": 0,
+        "local_pref": 100,
+        "origin": "igp",
+        "community": [
+          "64512:2002"
+        ],
+        "route_policy_in": "default",
+        "received_by": [
+          "YVR-CORE-1",
+          "YYC-CORE-2",
+          "YYZ-CORE-3",
+          "YWG-PE-6"
+        ],
+        "is_best": true,
+        "notes": "SVC-005 Healthcare eICU more-specific"
+      },
+      {
+        "prefix": "111.46.178.0/24",
+        "advertising_router": "YYZ-CORE-3",
+        "next_hop": "10.100.0.3",
+        "as_path": [],
+        "med": 0,
+        "local_pref": 100,
+        "origin": "igp",
+        "community": [
+          "64512:2003"
+        ],
+        "route_policy_in": "default",
+        "received_by": [
+          "YVR-CORE-1",
+          "YYC-CORE-2",
+          "YWG-PE-6",
+          "YOW-PE-7"
+        ],
+        "is_best": true,
+        "notes": "SVC-001 Energy Sector VPN more-specific"
+      },
+      {
+        "prefix": "111.46.180.0/22",
+        "advertising_router": "YYZ-CORE-3",
+        "next_hop": "10.100.0.3",
+        "as_path": [],
+        "med": 0,
+        "local_pref": 100,
+        "origin": "igp",
+        "community": [
+          "64512:2004"
+        ],
+        "route_policy_in": "default",
+        "received_by": [
+          "YVR-CORE-1",
+          "YYC-CORE-2",
+          "YWG-PE-6",
+          "YOW-PE-7"
+        ],
+        "is_best": true,
+        "notes": "SVC-002 Wholesale VoIP more-specific"
+      },
+      {
+        "prefix": "10.100.0.0/24",
+        "advertising_router": "YVR-CORE-1",
+        "next_hop": "10.100.0.1",
+        "as_path": [],
+        "med": 0,
+        "local_pref": 100,
+        "origin": "igp",
+        "community": [
+          "64512:9000"
+        ],
+        "route_policy_in": "default",
+        "received_by": [
+          "YYC-CORE-2",
+          "YYZ-CORE-3",
+          "YWG-PE-6",
+          "YOW-PE-7",
+          "YVR-RR-11"
+        ],
+        "is_best": true,
+        "notes": "Loopback aggregate (infra)"
+      },
+      {
+        "prefix": "203.0.113.0/24",
+        "advertising_router": "YVR-CORE-1",
+        "next_hop": "10.100.0.1",
+        "as_path": [],
+        "med": 0,
+        "local_pref": 90,
+        "origin": "igp",
+        "community": [
+          "64512:3001"
+        ],
+        "route_policy_in": "default",
+        "received_by": [
+          "YYC-CORE-2",
+          "YYZ-CORE-3",
+          "YWG-PE-6",
+          "YOW-PE-7"
+        ],
+        "is_best": true,
+        "notes": "SVC-006 CDN Peering anchor"
+      }
+    ],
+    "originated_routes": {
+      "YVR-CORE-1": [
+        {
+          "prefix": "10.100.0.0/24",
+          "next_hop": "10.100.0.1",
+          "as_path": [],
+          "med": 0,
+          "local_pref": 100,
+          "origin": "igp",
+          "community": [
+            "64512:9000"
+          ],
+          "export_policy": null,
+          "is_aggregate": false,
+          "aggregate_contributors": []
+        },
+        {
+          "prefix": "203.0.113.0/24",
+          "next_hop": "10.100.0.1",
+          "as_path": [],
+          "med": 0,
+          "local_pref": 90,
+          "origin": "igp",
+          "community": [
+            "64512:3001"
+          ],
+          "export_policy": null,
+          "is_aggregate": false,
+          "aggregate_contributors": []
+        }
+      ],
+      "YYC-CORE-2": [],
+      "YYZ-CORE-3": [
+        {
+          "prefix": "111.46.176.0/20",
+          "next_hop": "10.100.0.3",
+          "as_path": [],
+          "med": 0,
+          "local_pref": 100,
+          "origin": "igp",
+          "community": [
+            "64512:1000",
+            "64512:summary"
+          ],
+          "export_policy": "summary-XF",
+          "is_aggregate": true,
+          "aggregate_contributors": [
+            "111.46.176.0/24",
+            "111.46.177.0/24",
+            "111.46.178.0/24",
+            "111.46.180.0/22"
+          ]
+        },
+        {
+          "prefix": "111.46.178.0/24",
+          "next_hop": "10.100.0.3",
+          "as_path": [],
+          "med": 0,
+          "local_pref": 100,
+          "origin": "igp",
+          "community": [
+            "64512:2003"
+          ],
+          "export_policy": null,
+          "is_aggregate": false,
+          "aggregate_contributors": []
+        },
+        {
+          "prefix": "111.46.180.0/22",
+          "next_hop": "10.100.0.3",
+          "as_path": [],
+          "med": 0,
+          "local_pref": 100,
+          "origin": "igp",
+          "community": [
+            "64512:2004"
+          ],
+          "export_policy": null,
+          "is_aggregate": false,
+          "aggregate_contributors": []
+        }
+      ],
+      "YWG-PE-6": [],
+      "YOW-PE-7": [
+        {
+          "prefix": "111.46.176.0/24",
+          "next_hop": "10.100.0.7",
+          "as_path": [],
+          "med": 0,
+          "local_pref": 100,
+          "origin": "igp",
+          "community": [
+            "64512:2001"
+          ],
+          "export_policy": null,
+          "is_aggregate": false,
+          "aggregate_contributors": []
+        },
+        {
+          "prefix": "111.46.177.0/24",
+          "next_hop": "10.100.0.7",
+          "as_path": [],
+          "med": 0,
+          "local_pref": 100,
+          "origin": "igp",
+          "community": [
+            "64512:2002"
+          ],
+          "export_policy": null,
+          "is_aggregate": false,
+          "aggregate_contributors": []
+        }
+      ],
+      "YVR-RR-11": []
+    },
+    "adj_rib_in": {
+      "_note": "Pre-policy received view, per (router, neighbor). RR-client topology: clients have one neighbor (RR); RR has 5 client neighbors.",
+      "YVR-RR-11": [
+        {
+          "from_neighbor": "10.100.0.1",
+          "neighbor_name": "YVR-CORE-1",
+          "prefix": "10.100.0.0/24",
+          "next_hop": "10.100.0.1",
+          "local_pref": 100,
+          "as_path": [],
+          "med": 0,
+          "origin": "igp",
+          "community": [
+            "64512:9000"
+          ]
+        },
+        {
+          "from_neighbor": "10.100.0.1",
+          "neighbor_name": "YVR-CORE-1",
+          "prefix": "203.0.113.0/24",
+          "next_hop": "10.100.0.1",
+          "local_pref": 90,
+          "as_path": [],
+          "med": 0,
+          "origin": "igp",
+          "community": [
+            "64512:3001"
+          ]
+        },
+        {
+          "from_neighbor": "10.100.0.3",
+          "neighbor_name": "YYZ-CORE-3",
+          "prefix": "111.46.176.0/20",
+          "next_hop": "10.100.0.3",
+          "local_pref": 100,
+          "as_path": [],
+          "med": 0,
+          "origin": "igp",
+          "community": [
+            "64512:1000",
+            "64512:summary"
+          ],
+          "originated_under_policy": "summary-XF"
+        },
+        {
+          "from_neighbor": "10.100.0.3",
+          "neighbor_name": "YYZ-CORE-3",
+          "prefix": "111.46.178.0/24",
+          "next_hop": "10.100.0.3",
+          "local_pref": 100,
+          "as_path": [],
+          "med": 0,
+          "origin": "igp",
+          "community": [
+            "64512:2003"
+          ]
+        },
+        {
+          "from_neighbor": "10.100.0.3",
+          "neighbor_name": "YYZ-CORE-3",
+          "prefix": "111.46.180.0/22",
+          "next_hop": "10.100.0.3",
+          "local_pref": 100,
+          "as_path": [],
+          "med": 0,
+          "origin": "igp",
+          "community": [
+            "64512:2004"
+          ]
+        },
+        {
+          "from_neighbor": "10.100.0.7",
+          "neighbor_name": "YOW-PE-7",
+          "prefix": "111.46.176.0/24",
+          "next_hop": "10.100.0.7",
+          "local_pref": 100,
+          "as_path": [],
+          "med": 0,
+          "origin": "igp",
+          "community": [
+            "64512:2001"
+          ]
+        },
+        {
+          "from_neighbor": "10.100.0.7",
+          "neighbor_name": "YOW-PE-7",
+          "prefix": "111.46.177.0/24",
+          "next_hop": "10.100.0.7",
+          "local_pref": 100,
+          "as_path": [],
+          "med": 0,
+          "origin": "igp",
+          "community": [
+            "64512:2002"
+          ]
+        }
+      ]
+    }
+  },
+  "route_policies": {
+    "summary-XF": {
+      "owner": "YYZ-CORE-3",
+      "also_applied_on": [
+        "YYC-CORE-2"
+      ],
+      "description": "Cross-fabric summary aggregate covering 111.46.176.0/20. Demo B Route Withdraw target.",
+      "terms": [
+        {
+          "seq": 10,
+          "match": {
+            "prefix": "111.46.176.0/20",
+            "exact": true
+          },
+          "action": {
+            "set_community_add": [
+              "64512:summary"
+            ],
+            "set_local_pref": 100,
+            "permit": true
+          }
+        },
+        {
+          "seq": 20,
+          "match": {
+            "prefix": "111.46.176.0/20",
+            "le": 24
+          },
+          "action": {
+            "permit": true
+          }
+        },
+        {
+          "seq": 99,
+          "match": {
+            "any": true
+          },
+          "action": {
+            "permit": true
+          }
+        }
+      ],
+      "withdraw_impact_estimate": {
+        "affected_services": [
+          "SVC-001",
+          "SVC-002",
+          "SVC-003"
+        ],
+        "expected_longest_match_shift": true,
+        "expected_rib_churn_prefixes": 4,
+        "blast_radius_routers": [
+          "YVR-CORE-1",
+          "YYC-CORE-2",
+          "YWG-PE-6",
+          "YOW-PE-7"
+        ]
+      }
+    },
+    "export-vrf-blue": {
+      "owner": "YWG-PE-6",
+      "also_applied_on": [],
+      "description": "L3VPN export policy for VRF-Blue customers. Tags routes with the blue customer community before injecting into vpn-ipv4.",
+      "terms": [
+        {
+          "seq": 10,
+          "match": {
+            "community": "64512:blue"
+          },
+          "action": {
+            "set_community_add": [
+              "64512:vrf-blue"
+            ],
+            "permit": true
+          }
+        },
+        {
+          "seq": 99,
+          "match": {
+            "any": true
+          },
+          "action": {
+            "permit": false
+          }
+        }
+      ]
+    },
+    "export-customer-A": {
+      "owner": "YOW-PE-7",
+      "also_applied_on": [],
+      "description": "L3VPN export policy for Customer-A's VRF endpoints. Used in BGP export to the route reflector for the Customer-A vpn-ipv4 AFI.",
+      "terms": [
+        {
+          "seq": 10,
+          "match": {
+            "community": "64512:customer-a"
+          },
+          "action": {
+            "set_community_add": [
+              "64512:cust-a"
+            ],
+            "permit": true
+          }
+        },
+        {
+          "seq": 99,
+          "match": {
+            "any": true
+          },
+          "action": {
+            "permit": false
+          }
+        }
+      ]
+    },
+    "default": {
+      "owner": "all",
+      "description": "Permit-any baseline",
+      "terms": [
+        {
+          "seq": 99,
+          "match": {
+            "any": true
+          },
+          "action": {
+            "permit": true
+          }
+        }
+      ]
+    }
+  },
+  "router_aliases": {
+    "_note": "Generic placeholder names operators commonly use in change-request templates. Resolver consults these BEFORE heuristic fallbacks so 'PE-A' / 'Core-B' map deterministically without going through the role-only-ambiguous path. Bench intents WEP-02 (PE-A) and MC-06 (Core-A) exercise this surface.",
+    "PE-A": "YWG-PE-6",
+    "PE-B": "YOW-PE-7",
+    "Core-A": "YVR-CORE-1",
+    "Core-B": "YYC-CORE-2",
+    "Core-C": "YYZ-CORE-3"
+  },
+  "mpls_te": {
+    "realization": "sr-policy",
+    "_note": "TE tunnels are vendor-neutral abstractions in the algorithmic twin. On SR Linux 24.7 they are realized as SR-Policy with explicit segment lists (node-SIDs from data.segment_routing.node_sids). FRR is TI-LFA (see segment_routing.ti_lfa). Day-2 cRPD adds RSVP-TE realization for the same tunnel abstractions.",
+    "frr_mode": "ti-lfa",
+    "tunnels": [
+      {
+        "name": "te-tunnel100",
+        "headend": "YVR-CORE-1",
+        "tailend": "YYZ-CORE-3",
+        "color": 100,
+        "bandwidth_gbps": 5,
+        "setup_priority": 2,
+        "hold_priority": 2,
+        "primary_path": [
+          "YVR-CORE-1",
+          "YYC-CORE-2",
+          "YYZ-CORE-3"
+        ],
+        "primary_segment_list": [
+          16002,
+          16003
+        ],
+        "backup_path": [
+          "YVR-CORE-1",
+          "YWG-PE-6",
+          "YYZ-CORE-3"
+        ],
+        "backup_segment_list": [
+          16006,
+          16003
+        ],
+        "current_path": "primary",
+        "fast_reroute": true,
+        "carries_services": [
+          "SVC-001",
+          "SVC-002"
+        ]
+      },
+      {
+        "name": "te-tunnel200",
+        "headend": "YYZ-CORE-3",
+        "tailend": "YOW-PE-7",
+        "color": 200,
+        "bandwidth_gbps": 3,
+        "setup_priority": 1,
+        "hold_priority": 1,
+        "primary_path": [
+          "YYZ-CORE-3",
+          "YOW-PE-7"
+        ],
+        "primary_segment_list": [
+          16007
+        ],
+        "backup_path": [
+          "YYZ-CORE-3",
+          "YOW-PE-7"
+        ],
+        "backup_segment_list": [
+          16007
+        ],
+        "_backup_note": "YOW-PE-7 is single-homed via L3. No node-disjoint backup is topologically possible Day-1; TI-LFA falls back to local-repair when L3 fails. Day-2 multi-homing of YOW restores diverse backup.",
+        "current_path": "primary",
+        "fast_reroute": true,
+        "carries_services": [
+          "SVC-003",
+          "SVC-005"
+        ]
+      },
+      {
+        "name": "te-tunnel300",
+        "headend": "YVR-CORE-1",
+        "tailend": "YYC-CORE-2",
+        "color": 300,
+        "bandwidth_gbps": 4,
+        "setup_priority": 5,
+        "hold_priority": 5,
+        "primary_path": [
+          "YVR-CORE-1",
+          "YYC-CORE-2"
+        ],
+        "primary_segment_list": [
+          16002
+        ],
+        "backup_path": [
+          "YVR-CORE-1",
+          "YWG-PE-6",
+          "YYC-CORE-2"
+        ],
+        "backup_segment_list": [
+          16006,
+          16002
+        ],
+        "current_path": "primary",
+        "fast_reroute": true,
+        "carries_services": [
+          "SVC-006"
+        ]
+      }
+    ]
+  },
+  "services": [
+    {
+      "id": "SVC-001",
+      "customer": "Energy Sector VPN",
+      "sla_tier": "gold",
+      "revenue_per_month_usd": 185000,
+      "endpoints": [
+        "YVR-CORE-1",
+        "YYZ-CORE-3"
+      ],
+      "prefix_v4": [
+        "111.46.178.0/24"
+      ],
+      "tunnel": "te-tunnel100",
+      "vrf": {
+        "name": "vrf-svc-001",
+        "route_distinguisher": "64512:1",
+        "route_target": "target:64512:1",
+        "ce_prefix_v4": "192.168.10.0/24",
+        "_note": "CE-side prefix originated as discard-static in vrf-svc-001 on both PEs; cross-PE reachability via MP-BGP vpnv4 + te-tunnel100 transport."
+      },
+      "sla": {
+        "rtt_ms_max": 25,
+        "loss_pct_max": 0.01,
+        "availability_pct_min": 99.99
+      }
+    },
+    {
+      "id": "SVC-002",
+      "customer": "Wholesale VoIP",
+      "sla_tier": "platinum",
+      "revenue_per_month_usd": 320000,
+      "endpoints": [
+        "YVR-CORE-1",
+        "YYZ-CORE-3"
+      ],
+      "prefix_v4": [
+        "111.46.180.0/22"
+      ],
+      "tunnel": "te-tunnel100",
+      "vrf": {
+        "name": "vrf-svc-002",
+        "route_distinguisher": "64512:2",
+        "route_target": "target:64512:2",
+        "ce_prefix_v4": "192.168.20.0/24"
+      },
+      "sla": {
+        "owd_ms_max": 12,
+        "loss_pct_max": 0.001,
+        "mos_min": 3.5
+      }
+    },
+    {
+      "id": "SVC-003",
+      "customer": "Federal Gov SecureNet",
+      "sla_tier": "critical",
+      "revenue_per_month_usd": 410000,
+      "endpoints": [
+        "YYZ-CORE-3",
+        "YOW-PE-7"
+      ],
+      "prefix_v4": [
+        "111.46.176.0/24"
+      ],
+      "tunnel": "te-tunnel200",
+      "vrf": {
+        "name": "vrf-svc-003",
+        "route_distinguisher": "64512:3",
+        "route_target": "target:64512:3",
+        "ce_prefix_v4": "192.168.30.0/24"
+      },
+      "sla": {
+        "owd_ms_max": 8,
+        "loss_pct_max": 0.001,
+        "availability_pct_min": 99.999
+      }
+    },
+    {
+      "id": "SVC-005",
+      "customer": "Healthcare eICU",
+      "sla_tier": "gold",
+      "revenue_per_month_usd": 220000,
+      "endpoints": [
+        "YVR-CORE-1",
+        "YOW-PE-7"
+      ],
+      "prefix_v4": [
+        "111.46.177.0/24"
+      ],
+      "tunnel": "te-tunnel200",
+      "vrf": {
+        "name": "vrf-svc-005",
+        "route_distinguisher": "64512:5",
+        "route_target": "target:64512:5",
+        "ce_prefix_v4": "192.168.50.0/24"
+      },
+      "sla": {
+        "rtt_ms_max": 30,
+        "loss_pct_max": 0.01,
+        "availability_pct_min": 99.99
+      }
+    },
+    {
+      "id": "SVC-006",
+      "customer": "CDN Peering",
+      "sla_tier": "silver",
+      "revenue_per_month_usd": 95000,
+      "endpoints": [
+        "YVR-CORE-1",
+        "YYC-CORE-2",
+        "YYZ-CORE-3"
+      ],
+      "prefix_v4": [
+        "203.0.113.0/24"
+      ],
+      "tunnel": "te-tunnel300",
+      "vrf": {
+        "name": "vrf-svc-006",
+        "route_distinguisher": "64512:6",
+        "route_target": "target:64512:6",
+        "ce_prefix_v4": "192.168.60.0/24",
+        "_note": "3-endpoint VRF (YVR, YYC, YYZ all import RT 64512:6)."
+      },
+      "sla": {
+        "rtt_ms_max": 60,
+        "loss_pct_max": 0.05,
+        "availability_pct_min": 99.9
+      }
+    }
+  ],
+  "traffic_matrix": {
+    "unit": "Gbps",
+    "captured_at": "2026-05-12T07:00:00Z",
+    "flows": [
+      {
+        "src": "YVR-CORE-1",
+        "dst": "YYZ-CORE-3",
+        "service": "SVC-001",
+        "rate": 1.6,
+        "cos": "AF41",
+        "sla_tier": "gold"
+      },
+      {
+        "src": "YVR-CORE-1",
+        "dst": "YYZ-CORE-3",
+        "service": "SVC-002",
+        "rate": 3.2,
+        "cos": "EF",
+        "sla_tier": "platinum"
+      },
+      {
+        "src": "YYZ-CORE-3",
+        "dst": "YOW-PE-7",
+        "service": "SVC-003",
+        "rate": 1.2,
+        "cos": "EF",
+        "sla_tier": "critical"
+      },
+      {
+        "src": "YVR-CORE-1",
+        "dst": "YOW-PE-7",
+        "service": "SVC-005",
+        "rate": 0.8,
+        "cos": "AF41",
+        "sla_tier": "gold"
+      },
+      {
+        "src": "YVR-CORE-1",
+        "dst": "YYC-CORE-2",
+        "service": "SVC-006",
+        "rate": 2.3,
+        "cos": "AF11",
+        "sla_tier": "silver"
+      },
+      {
+        "src": "YYC-CORE-2",
+        "dst": "YYZ-CORE-3",
+        "service": "SVC-006",
+        "rate": 1.5,
+        "cos": "AF11",
+        "sla_tier": "silver"
+      }
+    ]
+  },
+  "platform_kpis": {
+    "ptp_phase_error_ns_max": 78,
+    "backup_link_util_threshold_pct": 85,
+    "sr_policies_active": 3,
+    "isis_adjacencies_up": 14,
+    "ibgp_sessions_up": 5
+  },
+  "demo_b_route_withdraw_seed": {
+    "description": "Operator intent for the Demo B beat: withdraw aggregate 111.46.176.0/20 from summary-XF on YYZ-CORE-3 and YYC-CORE-2.",
+    "intent_text": "Withdraw prefix 111.46.176.0/20 from route-policy summary-XF on YYZ-CORE-3 and YYC-CORE-2 during maintenance window 02:00-04:00 Toronto. Services affected: SVC-001, SVC-002, SVC-003.",
+    "expected_algorithmic_twin_findings": [
+      "Longest-match shifts: 111.46.176.0/24 stays via YOW-PE-7 (more-specific survives)",
+      "Aggregate route disappears from RIB of YVR-CORE-1, YWG-PE-6 (cross-fabric reachability for the /20 lost)",
+      "te-tunnel100 unaffected (carries explicit /24 service prefixes, not the aggregate)",
+      "SVC-003 Federal Gov path unchanged (already uses 111.46.176.0/24 explicit)"
+    ],
+    "expected_emulation_twin_findings": [
+      "BGP UPDATE withdraw observable on RR YVR-RR-11 within 2-3s",
+      "Convergence on YWG-PE-6 measurable via TestCenter traffic resumption"
+    ],
+    "expected_federation_layer": "rules",
+    "expected_verdict": "pass_with_caveat"
+  }
+}
