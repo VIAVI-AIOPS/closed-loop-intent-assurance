@@ -287,3 +287,4 @@ Notebook calls the [NVIDIA AI Foundation Models Community License](https://docs.
 ---
 
 *VIAVI and NVIDIA on the road to autonomous networks — Integrating Transport Network Digital Twins*
+This is my first github practice update.
